@@ -12,5 +12,7 @@ class Bitacora extends Model
         'fecha',
         'estado',
         'archivo_path',
+        'contenido',
+        'archivo_nombre',
     ];
 }

@@ -39,17 +39,21 @@
                         <td><span class="pill {{ $pillClass }}">{{ $b->estado }}</span></td>
                         <td>
                             <div class="actions">
-                                {{-- Ver (demo por ahora) --}}
-                                <button class="icon-btn" type="button" title="Ver"
-                                    onclick="alert('Próximamente: ver detalle');">
-                                    <svg aria-hidden="true"><use href="#icon-eye"></use></svg>
-                                </button>
+                               {{-- Ver (real) --}}
+<a class="icon-btn" title="Ver" href="{{ route('bitacoras.show', $b) }}">
+  <svg aria-hidden="true"><use href="#icon-eye"></use></svg>
+</a>
 
-                                {{-- Descargar (demo por ahora) --}}
-                                <button class="icon-btn" type="button" title="Descargar"
-                                    onclick="alert('Próximamente: descargar archivo');">
-                                    <svg aria-hidden="true"><use href="#icon-download"></use></svg>
-                                </button>
+{{-- Descargar (real si hay archivo) --}}
+@if($b->archivo_path)
+  <a class="icon-btn" title="Descargar" href="{{ route('bitacoras.download', $b) }}">
+    <svg aria-hidden="true"><use href="#icon-download"></use></svg>
+  </a>
+@else
+  <button class="icon-btn" type="button" title="Sin archivo" disabled style="opacity:.35; cursor:not-allowed;">
+    <svg aria-hidden="true"><use href="#icon-download"></use></svg>
+  </button>
+@endif
 
                                 {{-- Eliminar (real) --}}
                                 <form method="POST" action="{{ route('bitacoras.destroy', $b) }}">
