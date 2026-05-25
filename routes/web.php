@@ -40,4 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/bitacoras/{bitacora}', [BitacoraController::class, 'destroy'])->name('bitacoras.destroy');
 });
 
-require __DIR__.'/auth.php';
+use App\Http\Controllers\EvaluacionController;
+
+Route::get('/evaluacion/crear', [EvaluacionController::class, 'create'])->name('evaluacion.create');
+Route::post('/evaluacion/guardar', [EvaluacionController::class, 'store'])->name('evaluacion.store');
+
+require __DIR__ . '/auth.php';
