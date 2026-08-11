@@ -30,6 +30,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
+
+    Route::get('/bitacoras', [BitacoraController::class, 'index'])
+        ->name('bitacoras.index');
+
+    Route::get('/bitacoras/create', [BitacoraController::class, 'create'])
+        ->name('bitacoras.create');
+
+    Route::post('/bitacoras', [BitacoraController::class, 'store'])
+        ->name('bitacoras.store');
+
+    Route::get('/bitacoras/{bitacora}', [BitacoraController::class, 'show'])
+        ->name('bitacoras.show');
+
+    Route::get('/bitacoras/{bitacora}/download', [BitacoraController::class, 'download'])
+        ->name('bitacoras.download');
+
+    Route::delete('/bitacoras/{bitacora}', [BitacoraController::class, 'destroy'])
+        ->name('bitacoras.destroy');
+});
 
     // Bitácoras
     Route::get('/bitacoras', [BitacoraController::class, 'index'])->name('bitacoras.index');
@@ -44,7 +64,20 @@ Route::middleware('auth')->group(function () {
 
 use App\Http\Controllers\EvaluacionController;
 
-Route::get('/evaluacion/crear', [EvaluacionController::class, 'create'])->name('evaluacion.create');
-Route::post('/evaluacion/guardar', [EvaluacionController::class, 'store'])->name('evaluacion.store');
+Route::middleware(['auth', 'rol:instructor,administrador'])->group(function () {
+
+    Route::get('/evaluacion/crear', [EvaluacionController::class, 'create'])
+        ->name('evaluacion.create');
+
+    Route::post('/evaluacion/guardar', [EvaluacionController::class, 'store'])
+        ->name('evaluacion.store');
+});
+/*
+|--------------------------------------------------------------------------
+| Rutas temporales para probar los roles
+|--------------------------------------------------------------------------
+*/
+
+
 
 require __DIR__ . '/auth.php';

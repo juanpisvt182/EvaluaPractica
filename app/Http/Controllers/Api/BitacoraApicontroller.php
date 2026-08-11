@@ -14,7 +14,7 @@ class BitacoraApicontroller extends Controller
         $bitacoras = Bitacora::orderByDesc('id')->get();
 
         return response()->json([
-            'mensaje' => 'Listado de bitácoras',
+            'mensaje' => 'Listado de bitacoras',
             'data' => $bitacoras
         ]);
     }
@@ -22,7 +22,7 @@ class BitacoraApicontroller extends Controller
     public function show(Bitacora $bitacora)
     {
         return response()->json([
-            'mensaje' => 'Detalle de la bitácora',
+            'mensaje' => 'Detalle de la bitacora',
             'data' => $bitacora
         ]);
     }
@@ -58,7 +58,7 @@ class BitacoraApicontroller extends Controller
         ]);
 
         return response()->json([
-            'mensaje' => 'Bitácora creada correctamente',
+            'mensaje' => 'Bitacora creada correctamente',
             'data' => $bitacora
         ], 201);
     }
@@ -72,7 +72,7 @@ class BitacoraApicontroller extends Controller
         $bitacora->delete();
 
         return response()->json([
-            'mensaje' => 'Bitácora eliminada correctamente'
+            'mensaje' => 'Bitacora eliminada correctamente'
         ]);
     }
 }
