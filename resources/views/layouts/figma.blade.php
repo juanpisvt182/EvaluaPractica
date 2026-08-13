@@ -84,7 +84,29 @@
                     </a>
 
                 @endif
+{{-- Administración de usuarios: solo administrador --}}
+@if(auth()->user()->esAdministrador())
 
+    <a href="{{ route('admin.usuarios.index') }}"
+       class="{{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}">
+
+        <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+
+        <span>Usuarios</span>
+    </a>
+
+@endif
 
                 {{-- Perfil --}}
                 <a href="{{ route('profile.edit') }}"
