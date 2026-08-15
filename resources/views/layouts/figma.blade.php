@@ -66,6 +66,19 @@
 
                         <span>Bitácoras</span>
                     </a>
+                    <a
+                
+    href="{{ route('intentos.index') }}"
+    class="{{ request()->routeIs('intentos.*') ? 'active' : '' }}"
+>
+
+    <svg aria-hidden="true">
+        <use href="#icon-clipboard"></use>
+    </svg>
+
+    <span>Evaluaciones</span>
+
+</a>
 
                 @endif
 

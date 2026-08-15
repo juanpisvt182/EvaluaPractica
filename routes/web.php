@@ -7,7 +7,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Models\Bitacora;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PreguntaController;
-
+use App\Http\Controllers\IntentoController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -97,7 +97,23 @@ Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
 
     Route::delete('/bitacoras/{bitacora}', [BitacoraController::class, 'destroy'])
         ->name('bitacoras.destroy');
+        // Evaluaciones disponibles para el aprendiz
+Route::get('/mis-evaluaciones', [IntentoController::class, 'index'])
+    ->name('intentos.index');
+
+// Iniciar evaluación
+Route::post('/evaluaciones/{evaluacion}/iniciar', [IntentoController::class, 'iniciar'])
+    ->name('intentos.iniciar');
+
+// Presentar evaluación
+Route::get('/intentos/{intento}/presentar', [IntentoController::class, 'presentar'])
+    ->name('intentos.presentar');
 });
+Route::post('/intentos/{intento}/finalizar', [IntentoController::class, 'finalizar'])
+    ->name('intentos.finalizar');
+
+Route::get('/intentos/{intento}/resultado', [IntentoController::class, 'resultado'])
+    ->name('intentos.resultado');
 
 /*
 |--------------------------------------------------------------------------
