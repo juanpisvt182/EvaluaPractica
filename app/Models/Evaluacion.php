@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Evaluacion extends Model
 {
-    protected $table = 'evaluacions'; // Nombre de la tabla en la base de datos
+    protected $table = 'evaluacions';
 
     protected $fillable = [
         'user_id',
@@ -16,9 +16,19 @@ class Evaluacion extends Model
         'estado',
     ];
 
-    // Relación: Una evaluación pertenece a un instructor (Usuario)
+    /**
+     * Instructor que creó la evaluación.
+     */
     public function instructor()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Preguntas pertenecientes a la evaluación.
+     */
+    public function preguntas()
+    {
+        return $this->hasMany(Pregunta::class, 'evaluacion_id');
     }
 }

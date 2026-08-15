@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
 use App\Models\Bitacora;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PreguntaController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -98,7 +99,6 @@ Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
         ->name('bitacoras.destroy');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Evaluaciones - Instructor y administrador
@@ -107,11 +107,43 @@ Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
 
 Route::middleware(['auth', 'rol:instructor,administrador'])->group(function () {
 
-    Route::get('/evaluacion/crear', [EvaluacionController::class, 'create'])
+    // Listar evaluaciones
+    Route::get('/evaluaciones', [EvaluacionController::class, 'index'])
+        ->name('evaluacion.index');
+
+    // Mostrar formulario para crear
+    Route::get('/evaluaciones/crear', [EvaluacionController::class, 'create'])
         ->name('evaluacion.create');
 
-    Route::post('/evaluacion/guardar', [EvaluacionController::class, 'store'])
+    // Guardar nueva evaluación
+    Route::post('/evaluaciones', [EvaluacionController::class, 'store'])
         ->name('evaluacion.store');
+
+    // Ver evaluación
+    Route::get('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'show'])
+        ->name('evaluacion.show');
+
+    // Mostrar formulario para editar
+    Route::get('/evaluaciones/{evaluacion}/editar', [EvaluacionController::class, 'edit'])
+        ->name('evaluacion.edit');
+
+    // Actualizar evaluación
+    Route::put('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'update'])
+        ->name('evaluacion.update');
+
+    // Eliminar evaluación
+    Route::delete('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'destroy'])
+        ->name('evaluacion.destroy');
+        Route::post('/evaluaciones/{evaluacion}/preguntas', [PreguntaController::class, 'store'])
+    ->name('preguntas.store');
+
+Route::delete('/preguntas/{pregunta}', [PreguntaController::class, 'destroy'])
+    ->name('preguntas.destroy');
+    Route::get('/preguntas/{pregunta}/editar', [PreguntaController::class, 'edit'])
+    ->name('preguntas.edit');
+
+Route::put('/preguntas/{pregunta}', [PreguntaController::class, 'update'])
+    ->name('preguntas.update');
 });
 
 /*

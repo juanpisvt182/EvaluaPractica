@@ -73,7 +73,7 @@
                 {{-- Evaluación: instructor y administrador --}}
                 @if(auth()->user()->tieneRol('instructor', 'administrador'))
 
-                    <a href="{{ route('evaluacion.create') }}"
+                    <a href="{{ route('evaluacion.index') }}"
                        class="{{ request()->routeIs('evaluacion.*') ? 'active' : '' }}">
 
                         <svg aria-hidden="true">

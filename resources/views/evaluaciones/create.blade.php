@@ -1,42 +1,158 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>EvalúaPráctica - Crear Evaluación</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 p-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md border p-6">
-        <h2 class="text-2xl font-bold mb-4 text-indigo-700">Crear Nuevo Cuestionario</h2>
+@extends('layouts.figma')
 
-        @if(session('exito'))
-            <div class="mb-4 bg-green-100 text-green-700 p-3 rounded">
-                {{ session('exito') }}
+@section('page', 'evaluaciones')
+@section('title', 'Nueva Evaluación')
+@section('subtitle', 'Crea una nueva evaluación para los aprendices')
+
+@section('content')
+
+    <section class="card" style="padding:24px; max-width:800px;">
+
+        {{-- Mostrar errores de validación --}}
+        @if ($errors->any())
+            <div
+                style="
+                    background:#FEF2F2;
+                    border:1px solid #FECACA;
+                    padding:14px 16px;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                    color:#B91C1C;
+                "
+            >
+                <strong>Revisa los siguientes campos:</strong>
+
+                <ul style="margin-top:8px; padding-left:20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
-        <form action="{{ route('evaluacion.guardar') }}" method="POST" class="space-y-4">
-            @csrf 
-            <div>
-                <label class="block font-medium mb-1">ID Instructor Temporal:</label>
-                <input type="number" name="user_id" value="1" required class="w-full p-2 border rounded bg-gray-50">
+
+        <form
+            method="POST"
+            action="{{ route('evaluacion.store') }}"
+        >
+            @csrf
+
+
+            {{-- Título --}}
+            <div style="margin-bottom:20px;">
+
+                <label
+                    for="titulo"
+                    style="display:block; font-weight:700; margin-bottom:8px;"
+                >
+                    Título de la evaluación
+                </label>
+
+                <input
+                    id="titulo"
+                    type="text"
+                    name="titulo"
+                    value="{{ old('titulo') }}"
+                    required
+                    maxlength="255"
+                    style="
+                        width:100%;
+                        padding:12px 14px;
+                        border:1px solid #D7DCE5;
+                        border-radius:10px;
+                    "
+                    placeholder="Ejemplo: Evaluación de fundamentos de PHP"
+                >
+
             </div>
-            <div>
-                <label class="block font-medium mb-1">Título de la Evaluación:</label>
-                <input type="text" name="titulo" required class="w-full p-2 border rounded bg-gray-50">
+
+
+            {{-- Descripción --}}
+            <div style="margin-bottom:20px;">
+
+                <label
+                    for="descripcion"
+                    style="display:block; font-weight:700; margin-bottom:8px;"
+                >
+                    Descripción
+                </label>
+
+                <textarea
+                    id="descripcion"
+                    name="descripcion"
+                    rows="5"
+                    style="
+                        width:100%;
+                        padding:12px 14px;
+                        border:1px solid #D7DCE5;
+                        border-radius:10px;
+                        resize:vertical;
+                    "
+                    placeholder="Describe brevemente el contenido de la evaluación"
+                >{{ old('descripcion') }}</textarea>
+
             </div>
-            <div>
-                <label class="block font-medium mb-1">Tiempo Límite (minutos):</label>
-                <input type="number" name="tiempo_limite" required class="w-full p-2 border rounded bg-gray-50">
+
+
+            {{-- Tiempo límite --}}
+            <div style="margin-bottom:26px;">
+
+                <label
+                    for="tiempo_limite"
+                    style="display:block; font-weight:700; margin-bottom:8px;"
+                >
+                    Tiempo límite
+                </label>
+
+                <input
+                    id="tiempo_limite"
+                    type="number"
+                    name="tiempo_limite"
+                    value="{{ old('tiempo_limite', 30) }}"
+                    min="1"
+                    required
+                    style="
+                        width:200px;
+                        padding:12px 14px;
+                        border:1px solid #D7DCE5;
+                        border-radius:10px;
+                    "
+                >
+
+                <span style="margin-left:8px; color:#667085;">
+                    minutos
+                </span>
+
             </div>
-            <div>
-                <label class="block font-medium mb-1">Descripción:</label>
-                <textarea name="descripcion" rows="3" class="w-full p-2 border rounded bg-gray-50"></textarea>
+
+
+            {{-- Botones --}}
+            <div
+                style="
+                    display:flex;
+                    gap:12px;
+                    justify-content:flex-end;
+                "
+            >
+
+                <a
+                    href="{{ route('evaluacion.index') }}"
+                    class="btn btn--ghost"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn--accent"
+                >
+                    Crear Evaluación
+                </button>
+
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded font-bold hover:bg-indigo-700">
-                Guardar Evaluación (POST)
-            </button>
+
         </form>
-    </div>
-</body>
-</html>
+
+    </section>
+
+@endsection
