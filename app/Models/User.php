@@ -55,7 +55,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(Intento::class, 'user_id');
     }
- 
+ /**
+ * Grupos donde el usuario está asignado como instructor.
+ */
+public function gruposComoInstructor()
+{
+    return $this->hasMany(Grupo::class, 'instructor_id');
+}
+/**
+ * Grupos a los que pertenece el estudiante.
+ */
+public function grupos()
+{
+    return $this->belongsToMany(Grupo::class, 'grupo_user')
+        ->withTimestamps();
+}
     /** 
      * Define las conversiones automáticas del modelo. 
      * 

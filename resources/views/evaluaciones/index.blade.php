@@ -21,11 +21,13 @@
 
             <thead>
                 <tr>
-                    <th>Título</th>
-                    <th>Instructor</th>
-                    <th>Tiempo</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
+<th>Título</th>
+<th>Grupo</th>
+<th>Materia</th>
+<th>Instructor</th>
+<th>Tiempo</th>
+<th>Estado</th>
+<th>Acciones</th>
                 </tr>
             </thead>
 
@@ -44,14 +46,33 @@
                         <td>
                             {{ $evaluacion->titulo }}
                         </td>
+<td>
+    {{ $evaluacion->grupo->nombre ?? 'Sin grupo' }}
+</td>
 
+<td>
+    {{ $evaluacion->grupo->materia ?? 'Sin materia' }}
+</td>
                         <td>
                             {{ $evaluacion->instructor->name ?? 'Sin instructor' }}
                         </td>
+<td>
+    {{ $evaluacion->grupo->nombre ?? 'Sin grupo' }}
+</td>
 
+<td>
+    {{ $evaluacion->grupo->materia ?? 'Sin materia' }}
+</td>
                         <td>
                             {{ $evaluacion->tiempo_limite }} min
                         </td>
+<td>
+    {{ $evaluacion->grupo->nombre ?? 'Sin grupo' }}
+</td>
+
+<td>
+    {{ $evaluacion->grupo->materia ?? 'Sin materia' }}
+</td>
 
                         <td>
                             <span class="pill {{ $pillClass }}">
@@ -139,7 +160,7 @@
                 @empty
 
                     <tr>
-                        <td colspan="5" style="padding:18px 22px;">
+                        <td colspan="7" style="padding:18px 22px;">
                             No hay evaluaciones creadas todavía.
                         </td>
                     </tr>

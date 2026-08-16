@@ -8,6 +8,7 @@ use App\Models\Bitacora;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PreguntaController;
 use App\Http\Controllers\IntentoController;
+use App\Http\Controllers\GrupoController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -186,3 +187,50 @@ Route::middleware(['auth', 'rol:administrador'])
             ->name('usuarios.rol');
     });
 require __DIR__.'/auth.php';
+/*
+|--------------------------------------------------------------------------
+| Grupos
+|--------------------------------------------------------------------------
+*/
+
+// Solo el administrador puede crear y administrar grupos.
+Route::middleware(['auth', 'rol:administrador'])->group(function () {
+
+    Route::get('/grupos/crear', [GrupoController::class, 'create'])
+        ->name('grupos.create');
+
+    Route::post('/grupos', [GrupoController::class, 'store'])
+        ->name('grupos.store');
+
+    Route::post(
+        '/grupos/{grupo}/estudiantes',
+        [GrupoController::class, 'agregarEstudiante']
+    )->name('grupos.estudiantes.agregar');
+
+    Route::delete(
+        '/grupos/{grupo}/estudiantes/{estudiante}',
+        [GrupoController::class, 'quitarEstudiante']
+    )->name('grupos.estudiantes.quitar');
+
+});
+Route::get('/grupos/{grupo}/editar', [GrupoController::class, 'edit'])
+    ->name('grupos.edit');
+
+Route::put('/grupos/{grupo}', [GrupoController::class, 'update'])
+    ->name('grupos.update');
+    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])
+    ->name('grupos.destroy');
+
+
+// Usuarios autenticados pueden consultar sus grupos.
+Route::middleware('auth')->group(function () {
+
+    Route::get('/grupos', [GrupoController::class, 'index'])
+        ->name('grupos.index');
+
+    Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])
+        ->name('grupos.show');
+
+});
+
+

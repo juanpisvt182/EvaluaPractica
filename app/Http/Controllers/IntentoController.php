@@ -10,19 +10,29 @@ use Illuminate\Support\Facades\DB;
 class IntentoController extends Controller
 {
     /**
-     * Mostrar evaluaciones activas para el aprendiz.
-     */
-    public function index()
-    {
-        $evaluaciones = Evaluacion::with('instructor')
-            ->withCount('preguntas')
-            ->where('estado', 'Activa')
-            ->latest()
-            ->get();
+ * Mostrar evaluaciones activas para el estudiante.
+ */
+public function index()
+{
+    $usuario = auth()->user();
 
-        return view('intentos.index', compact('evaluaciones'));
-    }
+    $evaluaciones = Evaluacion::with([
+        'instructor',
+        'grupo',
+    ])
+        ->withCount('preguntas')
+        ->where('estado', 'Activa')
+        ->whereNotNull('grupo_id')
+        ->whereHas('grupo.estudiantes', function ($query) use ($usuario) {
 
+            $query->where('users.id', $usuario->id);
+
+        })
+        ->latest()
+        ->get();
+
+    return view('intentos.index', compact('evaluaciones'));
+}
     /**
      * Iniciar una evaluación.
      */
@@ -31,12 +41,32 @@ class IntentoController extends Controller
         if ($evaluacion->estado !== 'Activa') {
             abort(403, 'Esta evaluación no está disponible.');
         }
+$perteneceAlGrupo = $evaluacion->grupo()
+    ->whereHas('estudiantes', function ($query) {
 
+        $query->where('users.id', auth()->id());
+
+    })
+    ->exists();
+
+if (!$perteneceAlGrupo) {
+    abort(403, 'No perteneces al grupo asignado a esta evaluación.');
+}
         if ($evaluacion->preguntas()->count() === 0) {
             return redirect()
                 ->route('intentos.index')
                 ->with('error', 'Esta evaluación todavía no tiene preguntas.');
         }
+        $intentoFinalizado = Intento::where('user_id', auth()->id())
+    ->where('evaluacion_id', $evaluacion->id)
+    ->where('estado', 'Finalizado')
+    ->latest()
+    ->first();
+
+if ($intentoFinalizado) {
+    return redirect()
+        ->route('intentos.resultado', $intentoFinalizado);
+}
 
         $intento = Intento::where('user_id', auth()->id())
             ->where('evaluacion_id', $evaluacion->id)

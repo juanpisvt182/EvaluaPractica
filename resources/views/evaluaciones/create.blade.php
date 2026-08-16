@@ -36,7 +36,66 @@
             action="{{ route('evaluacion.store') }}"
         >
             @csrf
+{{-- Grupo / Materia --}}
+<div style="margin-bottom:20px;">
 
+    <label
+        for="grupo_id"
+        style="
+            display:block;
+            font-weight:700;
+            margin-bottom:8px;
+        "
+    >
+        Grupo / Materia
+    </label>
+
+    <select
+        id="grupo_id"
+        name="grupo_id"
+        required
+        style="
+            width:100%;
+            padding:12px 14px;
+            border:1px solid #D7DCE5;
+            border-radius:10px;
+            background:white;
+        "
+    >
+
+        <option value="">
+            Selecciona un grupo
+        </option>
+
+        @foreach($grupos as $grupo)
+
+            <option
+                value="{{ $grupo->id }}"
+                @selected(old('grupo_id') == $grupo->id)
+            >
+                {{ $grupo->nombre }} - {{ $grupo->materia }}
+            </option>
+
+        @endforeach
+
+    </select>
+
+
+    @if($grupos->isEmpty())
+
+        <div
+            style="
+                margin-top:8px;
+                color:#667085;
+                font-size:14px;
+            "
+        >
+            No tienes grupos activos disponibles.
+        </div>
+
+    @endif
+
+</div>
 
             {{-- Título --}}
             <div style="margin-bottom:20px;">
@@ -143,8 +202,10 @@
                 </a>
 
                 <button
-                    type="submit"
-                    class="btn btn--accent"
+    type="submit"
+    class="btn btn--accent"
+    @disabled($grupos->isEmpty())
+>
                 >
                     Crear Evaluación
                 </button>

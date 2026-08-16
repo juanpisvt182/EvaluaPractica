@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Evaluacion;
 use Illuminate\Http\Request;
+use App\Models\Grupo;
 
 class EvaluacionController extends Controller
 {
@@ -11,54 +12,98 @@ class EvaluacionController extends Controller
      * Mostrar el listado de evaluaciones.
      */
     public function index()
-    {
-        $usuario = auth()->user();
+{
+    $usuario = auth()->user();
 
-        if ($usuario->esAdministrador()) {
-            $evaluaciones = Evaluacion::with('instructor')
-                ->latest()
-                ->get();
-        } else {
-            $evaluaciones = Evaluacion::with('instructor')
-                ->where('user_id', $usuario->id)
-                ->latest()
-                ->get();
-        }
+    if ($usuario->esAdministrador()) {
 
-        return view('evaluaciones.index', compact('evaluaciones'));
+        $evaluaciones = Evaluacion::with([
+            'instructor',
+            'grupo',
+        ])
+            ->latest()
+            ->get();
+
+    } else {
+
+        $evaluaciones = Evaluacion::with([
+            'instructor',
+            'grupo',
+        ])
+            ->where('user_id', $usuario->id)
+            ->latest()
+            ->get();
     }
+
+    return view('evaluaciones.index', compact('evaluaciones'));
+}
 
     /**
      * Mostrar el formulario para crear una evaluación.
      */
-    public function create()
-    {
-        return view('evaluaciones.create');
+   public function create()
+{
+    $usuario = auth()->user();
+
+    if ($usuario->esAdministrador()) {
+
+        $grupos = Grupo::with('instructor')
+            ->where('estado', 'Activo')
+            ->orderBy('nombre')
+            ->orderBy('materia')
+            ->get();
+
+    } else {
+
+        $grupos = Grupo::with('instructor')
+            ->where('instructor_id', $usuario->id)
+            ->where('estado', 'Activo')
+            ->orderBy('nombre')
+            ->orderBy('materia')
+            ->get();
     }
+
+    return view('evaluaciones.create', compact('grupos'));
+}
 
     /**
      * Guardar una nueva evaluación.
      */
-    public function store(Request $request)
-    {
-        $datos = $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'tiempo_limite' => 'required|integer|min:1',
-        ]);
+   public function store(Request $request)
+{
+    $usuario = auth()->user();
 
-        Evaluacion::create([
-            'user_id' => auth()->id(),
-            'titulo' => $datos['titulo'],
-            'descripcion' => $datos['descripcion'] ?? null,
-            'tiempo_limite' => $datos['tiempo_limite'],
-            'estado' => 'Activa',
-        ]);
+    $datos = $request->validate([
+        'grupo_id' => 'required|exists:grupos,id',
+        'titulo' => 'required|string|max:255',
+        'descripcion' => 'nullable|string',
+        'tiempo_limite' => 'required|integer|min:1',
+    ]);
 
-        return redirect()
-            ->route('evaluacion.index')
-            ->with('success', 'Evaluación creada correctamente.');
+    $grupo = Grupo::findOrFail($datos['grupo_id']);
+
+    // Un instructor solo puede crear evaluaciones
+    // para los grupos que tiene asignados.
+    if (
+        !$usuario->esAdministrador() &&
+        $grupo->instructor_id !== $usuario->id
+    ) {
+        abort(403);
     }
+
+    Evaluacion::create([
+        'user_id' => $usuario->id,
+        'grupo_id' => $grupo->id,
+        'titulo' => $datos['titulo'],
+        'descripcion' => $datos['descripcion'] ?? null,
+        'tiempo_limite' => $datos['tiempo_limite'],
+        'estado' => 'Activa',
+    ]);
+
+    return redirect()
+        ->route('evaluacion.index')
+        ->with('success', 'Evaluación creada correctamente.');
+}
 
     /**
      * Mostrar una evaluación.

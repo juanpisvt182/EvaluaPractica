@@ -139,7 +139,28 @@
     </a>
 
 @endif
+{{-- Grupos --}}
+<a
+    href="{{ route('grupos.index') }}"
+    class="{{ request()->routeIs('grupos.*') ? 'active' : '' }}"
+>
 
+    <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+    >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+
+    <span>Grupos</span>
+
+</a>
                 {{-- Perfil --}}
                 <a href="{{ route('profile.edit') }}"
                    class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
@@ -213,9 +234,40 @@
                 </div>
 
             @endif
+@if(session('success'))
+
+    <div
+        class="card"
+        style="padding:14px 16px; margin-bottom:14px;"
+    >
+        <strong style="color:#15803D;">
+            {{ session('success') }}
+        </strong>
+    </div>
+
+@endif
 
 
-            @yield('content')
+@if(session('error'))
+
+    <div
+        class="card"
+        style="
+            padding:14px 16px;
+            margin-bottom:14px;
+            border:1px solid #FECACA;
+        "
+    >
+        <strong style="color:#B91C1C;">
+            {{ session('error') }}
+        </strong>
+    </div>
+
+@endif
+
+
+@yield('content')
+
 
         </main>
 

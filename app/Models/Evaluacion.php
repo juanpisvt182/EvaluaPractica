@@ -14,6 +14,7 @@ class Evaluacion extends Model
         'descripcion',
         'tiempo_limite',
         'estado',
+        'grupo_id',
     ];
 
     public function instructor()
@@ -30,4 +31,10 @@ class Evaluacion extends Model
     {
         return $this->hasMany(Intento::class, 'evaluacion_id');
     }
-}
+/**
+ * Grupo al que pertenece la evaluación.
+ */
+public function grupo()
+{
+    return $this->belongsTo(Grupo::class);
+}}
