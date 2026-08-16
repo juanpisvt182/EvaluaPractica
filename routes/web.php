@@ -55,44 +55,123 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
 
-    Route::get('/bitacoras', [BitacoraController::class, 'index'])
-        ->name('bitacoras.index');
-
-    Route::get('/bitacoras/create', [BitacoraController::class, 'create'])
-        ->name('bitacoras.create');
-
-    Route::post('/bitacoras', [BitacoraController::class, 'store'])
-        ->name('bitacoras.store');
-
-    Route::get('/bitacoras/{bitacora}', [BitacoraController::class, 'show'])
-        ->name('bitacoras.show');
-
-    Route::get('/bitacoras/{bitacora}/download', [BitacoraController::class, 'download'])
-        ->name('bitacoras.download');
-
-    Route::delete('/bitacoras/{bitacora}', [BitacoraController::class, 'destroy'])
-        ->name('bitacoras.destroy');
+    Route::get(
+        '/bitacoras',
+        [BitacoraController::class, 'index']
+    )->name('bitacoras.index');
 
 
-    // Evaluaciones del aprendiz
-    Route::get('/mis-evaluaciones', [IntentoController::class, 'index'])
-        ->name('intentos.index');
+    Route::get(
+        '/bitacoras/create',
+        [BitacoraController::class, 'create']
+    )->name('bitacoras.create');
 
-    Route::get('/mis-resultados', [IntentoController::class, 'historial'])
-        ->name('intentos.historial');
 
-    Route::post('/evaluaciones/{evaluacion}/iniciar', [IntentoController::class, 'iniciar'])
-        ->name('intentos.iniciar');
+    Route::post(
+        '/bitacoras',
+        [BitacoraController::class, 'store']
+    )->name('bitacoras.store');
 
-    Route::get('/intentos/{intento}/presentar', [IntentoController::class, 'presentar'])
-        ->name('intentos.presentar');
 
-    Route::post('/intentos/{intento}/finalizar', [IntentoController::class, 'finalizar'])
-        ->name('intentos.finalizar');
+    Route::get(
+        '/bitacoras/{bitacora}',
+        [BitacoraController::class, 'show']
+    )->name('bitacoras.show');
 
-    Route::get('/intentos/{intento}/resultado', [IntentoController::class, 'resultado'])
-        ->name('intentos.resultado');
+
+    Route::get(
+        '/bitacoras/{bitacora}/download',
+        [BitacoraController::class, 'download']
+    )->name('bitacoras.download');
+
+
+    Route::delete(
+        '/bitacoras/{bitacora}',
+        [BitacoraController::class, 'destroy']
+    )->name('bitacoras.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Evaluaciones del estudiante
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/mis-evaluaciones',
+        [IntentoController::class, 'index']
+    )->name('intentos.index');
+
+
+    Route::get(
+        '/mis-resultados',
+        [IntentoController::class, 'historial']
+    )->name('intentos.historial');
+
+
+    Route::post(
+        '/evaluaciones/{evaluacion}/iniciar',
+        [IntentoController::class, 'iniciar']
+    )->name('intentos.iniciar');
+
+
+    Route::get(
+        '/intentos/{intento}/presentar',
+        [IntentoController::class, 'presentar']
+    )->name('intentos.presentar');
+
+
+    Route::post(
+        '/intentos/{intento}/finalizar',
+        [IntentoController::class, 'finalizar']
+    )->name('intentos.finalizar');
+
+
+    Route::get(
+        '/intentos/{intento}/resultado',
+        [IntentoController::class, 'resultado']
+    )->name('intentos.resultado');
+
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Revisión de Bitácoras - Docente y administrador
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([
+    'auth',
+    'rol:instructor,administrador',
+])->group(function () {
+
+    Route::get(
+        '/revision-bitacoras',
+        [BitacoraController::class, 'revisionIndex']
+    )->name('bitacoras.revision.index');
+
+
+    Route::get(
+        '/revision-bitacoras/{bitacora}/download',
+        [BitacoraController::class, 'revisionDownload']
+    )->name('bitacoras.revision.download');
+
+
+    Route::get(
+        '/revision-bitacoras/{bitacora}',
+        [BitacoraController::class, 'revisionShow']
+    )->name('bitacoras.revision.show');
+
+
+    Route::patch(
+        '/revision-bitacoras/{bitacora}',
+        [BitacoraController::class, 'revisar']
+    )->name('bitacoras.revision.revisar');
+
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | Evaluaciones - Instructor y administrador

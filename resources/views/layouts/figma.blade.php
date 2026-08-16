@@ -114,6 +114,16 @@
 
                         <span>Evaluación</span>
                     </a>
+                    <a
+    href="{{ route('bitacoras.revision.index') }}"
+    class="{{ request()->routeIs('bitacoras.revision.*') ? 'active' : '' }}"
+>
+    <svg aria-hidden="true">
+        <use href="#icon-book"></use>
+    </svg>
+
+    <span>Revisión de Bitácoras</span>
+</a>
 
                 @endif
 {{-- Administración de usuarios: solo administrador --}}

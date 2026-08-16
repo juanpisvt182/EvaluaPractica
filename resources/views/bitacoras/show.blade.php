@@ -30,7 +30,87 @@
         <div style="color:#667085; margin-top:8px;">No hay archivo adjunto.</div>
       @endif
     </div>
+{{-- Revisión del docente --}}
+@if(in_array($bitacora->estado, ['Aprobado', 'Rechazado']))
 
+    <div
+        style="
+            margin-top:18px;
+            padding:16px;
+            border:1px solid #E5E7EB;
+            border-radius:12px;
+            background:#F9FAFB;
+        "
+    >
+
+        <h3 style="margin:0 0 14px;">
+            Revisión del docente
+        </h3>
+
+
+        <div style="margin-bottom:10px;">
+
+            <strong>Resultado:</strong>
+
+            <span
+                class="pill"
+                style="
+                    margin-left:6px;
+
+                    @if($bitacora->estado === 'Aprobado')
+                        background:#DCFCE7;
+                        color:#15803D;
+                    @else
+                        background:#FEE2E2;
+                        color:#B91C1C;
+                    @endif
+                "
+            >
+                {{ $bitacora->estado }}
+            </span>
+
+        </div>
+
+
+        <div style="margin-bottom:10px;">
+
+            <strong>Revisado por:</strong>
+
+            {{ $bitacora->revisor->name ?? 'Docente' }}
+
+        </div>
+
+
+        @if($bitacora->revisado_at)
+
+            <div style="margin-bottom:10px;">
+
+                <strong>Fecha de revisión:</strong>
+
+                {{ $bitacora->revisado_at->format('d/m/Y H:i') }}
+
+            </div>
+
+        @endif
+
+
+        <div>
+
+            <strong>Retroalimentación:</strong>
+
+            <div
+                style="
+                    margin-top:8px;
+                    color:#344054;
+                    white-space:pre-wrap;
+                "
+            >{{ $bitacora->retroalimentacion ?: 'Sin observaciones adicionales.' }}</div>
+
+        </div>
+
+    </div>
+
+@endif
     <div class="footer-actions" style="justify-content:flex-start;">
       <a class="btn btn--ghost" href="{{ route('bitacoras.index') }}">Volver</a>
     </div>

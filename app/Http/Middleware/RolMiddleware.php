@@ -16,10 +16,32 @@ class RolMiddleware
         Closure $next,
         string ...$roles
     ): Response {
+
         $user = $request->user();
 
-        if (! $user || ! $user->tieneRol(...$roles)) {
-            abort(403, 'No tienes permiso para acceder a esta sección.');
+        
+        $rolesPermitidos = [];
+
+        foreach ($roles as $rol) {
+
+            foreach (explode(',', $rol) as $rolIndividual) {
+
+                $rolIndividual = trim($rolIndividual);
+
+                if ($rolIndividual !== '') {
+                    $rolesPermitidos[] = $rolIndividual;
+                }
+            }
+        }
+
+        if (
+            !$user ||
+            !$user->tieneRol(...$rolesPermitidos)
+        ) {
+            abort(
+                403,
+                'No tienes permiso para acceder a esta sección.'
+            );
         }
 
         return $next($request);
