@@ -246,7 +246,7 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 
-// Solo el administrador puede crear y administrar grupos.
+// Solo el administrador puede crear, editar y administrar grupos.
 Route::middleware(['auth', 'rol:administrador'])->group(function () {
 
     Route::get('/grupos/crear', [GrupoController::class, 'create'])
@@ -254,6 +254,15 @@ Route::middleware(['auth', 'rol:administrador'])->group(function () {
 
     Route::post('/grupos', [GrupoController::class, 'store'])
         ->name('grupos.store');
+
+    Route::get('/grupos/{grupo}/editar', [GrupoController::class, 'edit'])
+        ->name('grupos.edit');
+
+    Route::put('/grupos/{grupo}', [GrupoController::class, 'update'])
+        ->name('grupos.update');
+
+    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])
+        ->name('grupos.destroy');
 
     Route::post(
         '/grupos/{grupo}/estudiantes',
@@ -264,18 +273,10 @@ Route::middleware(['auth', 'rol:administrador'])->group(function () {
         '/grupos/{grupo}/estudiantes/{estudiante}',
         [GrupoController::class, 'quitarEstudiante']
     )->name('grupos.estudiantes.quitar');
-
 });
-Route::get('/grupos/{grupo}/editar', [GrupoController::class, 'edit'])
-    ->name('grupos.edit');
-
-Route::put('/grupos/{grupo}', [GrupoController::class, 'update'])
-    ->name('grupos.update');
-    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])
-    ->name('grupos.destroy');
 
 
-// Usuarios autenticados pueden consultar sus grupos.
+// Todos los usuarios autenticados pueden consultar sus grupos.
 Route::middleware('auth')->group(function () {
 
     Route::get('/grupos', [GrupoController::class, 'index'])
@@ -283,7 +284,4 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])
         ->name('grupos.show');
-
 });
-
-
