@@ -14,13 +14,11 @@ class EvaluacionController extends Controller
     {
         $usuario = auth()->user();
 
-        // El administrador puede ver todas las evaluaciones.
         if ($usuario->esAdministrador()) {
             $evaluaciones = Evaluacion::with('instructor')
                 ->latest()
                 ->get();
         } else {
-            // El instructor solo ve sus propias evaluaciones.
             $evaluaciones = Evaluacion::with('instructor')
                 ->where('user_id', $usuario->id)
                 ->latest()
@@ -65,17 +63,18 @@ class EvaluacionController extends Controller
     /**
      * Mostrar una evaluación.
      */
-  public function show(Evaluacion $evaluacion)
-{
-    $this->verificarAcceso($evaluacion);
+    public function show(Evaluacion $evaluacion)
+    {
+        $this->verificarAcceso($evaluacion);
 
-    $evaluacion->load([
-        'instructor',
-        'preguntas.opciones'
-    ]);
+        $evaluacion->load([
+            'instructor',
+            'preguntas.opciones',
+        ]);
 
-    return view('evaluaciones.show', compact('evaluacion'));
-}
+        return view('evaluaciones.show', compact('evaluacion'));
+    }
+
     /**
      * Mostrar el formulario para editar.
      */
@@ -105,6 +104,25 @@ class EvaluacionController extends Controller
         return redirect()
             ->route('evaluacion.index')
             ->with('success', 'Evaluación actualizada correctamente.');
+    }
+
+    /**
+     * Mostrar los resultados obtenidos por los aprendices.
+     */
+    public function resultados(Evaluacion $evaluacion)
+    {
+        $this->verificarAcceso($evaluacion);
+
+        $intentos = $evaluacion->intentos()
+            ->with('usuario')
+            ->where('estado', 'Finalizado')
+            ->latest('finalizado_at')
+            ->get();
+
+        return view(
+            'evaluaciones.resultados',
+            compact('evaluacion', 'intentos')
+        );
     }
 
     /**

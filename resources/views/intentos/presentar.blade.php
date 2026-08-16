@@ -27,12 +27,20 @@
                 </div>
             </div>
 
-            <div>
-                <strong>Tiempo límite</strong>
-                <div style="margin-top:4px;">
-                    {{ $intento->evaluacion->tiempo_limite }} minutos
-                </div>
-            </div>
+           <div>
+    <strong>Tiempo restante</strong>
+
+    <div
+        id="temporizador"
+        style="
+            margin-top:4px;
+            font-size:20px;
+            font-weight:800;
+        "
+    >
+        --:--
+    </div>
+</div>
 
             <div>
                 <strong>Estado</strong>
@@ -69,6 +77,7 @@
             method="POST"
             action="{{ route('intentos.finalizar', $intento) }}"
             onsubmit="return confirm('¿Seguro que deseas finalizar la evaluación? Después no podrás cambiar estas respuestas.')"
+            id="form-evaluacion"
         >
 
             @csrf
@@ -166,5 +175,47 @@
         </form>
 
     </div>
+   <script>
+    let segundosRestantes = {{ $segundosRestantes }};
+    let evaluacionEnviada = false;
 
+    const temporizador = document.getElementById('temporizador');
+    const formulario = document.getElementById('form-evaluacion');
+
+    function actualizarTemporizador() {
+
+        const minutos = Math.floor(segundosRestantes / 60);
+        const segundos = segundosRestantes % 60;
+
+        temporizador.textContent =
+            String(minutos).padStart(2, '0') +
+            ':' +
+            String(segundos).padStart(2, '0');
+
+        if (segundosRestantes <= 60) {
+            temporizador.style.color = '#B42318';
+        }
+
+        if (segundosRestantes <= 0 && !evaluacionEnviada) {
+
+            evaluacionEnviada = true;
+
+            temporizador.textContent = '00:00';
+
+            clearInterval(intervalo);
+
+            alert('El tiempo de la evaluación ha terminado.');
+
+            formulario.submit();
+
+            return;
+        }
+
+        segundosRestantes--;
+    }
+
+    actualizarTemporizador();
+
+    const intervalo = setInterval(actualizarTemporizador, 1000);
+</script>
 @endsection

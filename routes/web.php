@@ -97,24 +97,27 @@ Route::middleware(['auth', 'rol:aprendiz'])->group(function () {
 
     Route::delete('/bitacoras/{bitacora}', [BitacoraController::class, 'destroy'])
         ->name('bitacoras.destroy');
-        // Evaluaciones disponibles para el aprendiz
-Route::get('/mis-evaluaciones', [IntentoController::class, 'index'])
-    ->name('intentos.index');
 
-// Iniciar evaluación
-Route::post('/evaluaciones/{evaluacion}/iniciar', [IntentoController::class, 'iniciar'])
-    ->name('intentos.iniciar');
 
-// Presentar evaluación
-Route::get('/intentos/{intento}/presentar', [IntentoController::class, 'presentar'])
-    ->name('intentos.presentar');
+    // Evaluaciones del aprendiz
+    Route::get('/mis-evaluaciones', [IntentoController::class, 'index'])
+        ->name('intentos.index');
+
+    Route::get('/mis-resultados', [IntentoController::class, 'historial'])
+        ->name('intentos.historial');
+
+    Route::post('/evaluaciones/{evaluacion}/iniciar', [IntentoController::class, 'iniciar'])
+        ->name('intentos.iniciar');
+
+    Route::get('/intentos/{intento}/presentar', [IntentoController::class, 'presentar'])
+        ->name('intentos.presentar');
+
+    Route::post('/intentos/{intento}/finalizar', [IntentoController::class, 'finalizar'])
+        ->name('intentos.finalizar');
+
+    Route::get('/intentos/{intento}/resultado', [IntentoController::class, 'resultado'])
+        ->name('intentos.resultado');
 });
-Route::post('/intentos/{intento}/finalizar', [IntentoController::class, 'finalizar'])
-    ->name('intentos.finalizar');
-
-Route::get('/intentos/{intento}/resultado', [IntentoController::class, 'resultado'])
-    ->name('intentos.resultado');
-
 /*
 |--------------------------------------------------------------------------
 | Evaluaciones - Instructor y administrador
@@ -123,44 +126,47 @@ Route::get('/intentos/{intento}/resultado', [IntentoController::class, 'resultad
 
 Route::middleware(['auth', 'rol:instructor,administrador'])->group(function () {
 
-    // Listar evaluaciones
     Route::get('/evaluaciones', [EvaluacionController::class, 'index'])
         ->name('evaluacion.index');
 
-    // Mostrar formulario para crear
     Route::get('/evaluaciones/crear', [EvaluacionController::class, 'create'])
         ->name('evaluacion.create');
 
-    // Guardar nueva evaluación
     Route::post('/evaluaciones', [EvaluacionController::class, 'store'])
         ->name('evaluacion.store');
 
-    // Ver evaluación
     Route::get('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'show'])
         ->name('evaluacion.show');
 
-    // Mostrar formulario para editar
     Route::get('/evaluaciones/{evaluacion}/editar', [EvaluacionController::class, 'edit'])
         ->name('evaluacion.edit');
 
-    // Actualizar evaluación
     Route::put('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'update'])
         ->name('evaluacion.update');
 
-    // Eliminar evaluación
     Route::delete('/evaluaciones/{evaluacion}', [EvaluacionController::class, 'destroy'])
         ->name('evaluacion.destroy');
-        Route::post('/evaluaciones/{evaluacion}/preguntas', [PreguntaController::class, 'store'])
-    ->name('preguntas.store');
 
-Route::delete('/preguntas/{pregunta}', [PreguntaController::class, 'destroy'])
-    ->name('preguntas.destroy');
+
+    // Resultados de la evaluación
+    Route::get('/evaluaciones/{evaluacion}/resultados', [EvaluacionController::class, 'resultados'])
+        ->name('evaluacion.resultados');
+
+
+    // Preguntas
+    Route::post('/evaluaciones/{evaluacion}/preguntas', [PreguntaController::class, 'store'])
+        ->name('preguntas.store');
+
     Route::get('/preguntas/{pregunta}/editar', [PreguntaController::class, 'edit'])
-    ->name('preguntas.edit');
+        ->name('preguntas.edit');
 
-Route::put('/preguntas/{pregunta}', [PreguntaController::class, 'update'])
-    ->name('preguntas.update');
-});
+    Route::put('/preguntas/{pregunta}', [PreguntaController::class, 'update'])
+        ->name('preguntas.update');
+
+    Route::delete('/preguntas/{pregunta}', [PreguntaController::class, 'destroy'])
+        ->name('preguntas.destroy');
+
+}); 
 
 /*
 |--------------------------------------------------------------------------

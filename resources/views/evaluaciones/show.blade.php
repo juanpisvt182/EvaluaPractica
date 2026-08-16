@@ -5,12 +5,21 @@
 @section('subtitle', 'Consulta la información y administra las preguntas')
 
 @section('top_action')
+
+    <a
+        class="btn btn--ghost"
+        href="{{ route('evaluacion.resultados', $evaluacion) }}"
+    >
+        Ver Resultados
+    </a>
+
     <a
         class="btn btn--accent"
         href="{{ route('evaluacion.edit', $evaluacion) }}"
     >
         Editar Evaluación
     </a>
+
 @endsection
 
 

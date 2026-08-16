@@ -16,19 +16,18 @@ class Evaluacion extends Model
         'estado',
     ];
 
-    /**
-     * Instructor que creó la evaluación.
-     */
     public function instructor()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Preguntas pertenecientes a la evaluación.
-     */
     public function preguntas()
     {
         return $this->hasMany(Pregunta::class, 'evaluacion_id');
+    }
+
+    public function intentos()
+    {
+        return $this->hasMany(Intento::class, 'evaluacion_id');
     }
 }

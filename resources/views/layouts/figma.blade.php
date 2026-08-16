@@ -54,33 +54,52 @@
                 </a>
 
 
-                {{-- Bitácoras: aprendiz --}}
-                @if(auth()->user()->esAprendiz())
+                {{-- Opciones del aprendiz --}}
+@if(auth()->user()->esAprendiz())
 
-                    <a href="{{ route('bitacoras.index') }}"
-                       class="{{ request()->routeIs('bitacoras.*') ? 'active' : '' }}">
+    {{-- Bitácoras --}}
+    <a href="{{ route('bitacoras.index') }}"
+       class="{{ request()->routeIs('bitacoras.*') ? 'active' : '' }}">
 
-                        <svg aria-hidden="true">
-                            <use href="#icon-book"></use>
-                        </svg>
+        <svg aria-hidden="true">
+            <use href="#icon-book"></use>
+        </svg>
 
-                        <span>Bitácoras</span>
-                    </a>
-                    <a
-                
-    href="{{ route('intentos.index') }}"
-    class="{{ request()->routeIs('intentos.*') ? 'active' : '' }}"
->
+        <span>Bitácoras</span>
+    </a>
 
-    <svg aria-hidden="true">
-        <use href="#icon-clipboard"></use>
-    </svg>
 
-    <span>Evaluaciones</span>
+    {{-- Evaluaciones --}}
+    <a href="{{ route('intentos.index') }}"
+       class="{{ request()->routeIs('intentos.index', 'intentos.presentar') ? 'active' : '' }}">
 
-</a>
+        <svg aria-hidden="true">
+            <use href="#icon-clipboard"></use>
+        </svg>
 
-                @endif
+        <span>Evaluaciones</span>
+    </a>
+
+
+    {{-- Mis resultados --}}
+    <a href="{{ route('intentos.historial') }}"
+       class="{{ request()->routeIs('intentos.historial', 'intentos.resultado') ? 'active' : '' }}">
+
+        <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+            <path d="M3 3v18h18"></path>
+            <path d="M7 16l4-4 3 3 5-7"></path>
+        </svg>
+
+        <span>Mis resultados</span>
+    </a>
+
+@endif
 
 
                 {{-- Evaluación: instructor y administrador --}}

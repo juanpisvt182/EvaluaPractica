@@ -87,35 +87,61 @@
 
                         <td>
 
-                            @if($evaluacion->preguntas_count > 0)
+                           @php
+    $intento = $evaluacion->intentos->first();
+@endphp
 
-                                <form
-                                    method="POST"
-                                    action="{{ route('intentos.iniciar', $evaluacion) }}"
-                                >
-                                    @csrf
 
-                                    <button
-                                        type="submit"
-                                        class="btn btn--accent"
-                                    >
-                                        Presentar
-                                    </button>
+@if($evaluacion->preguntas_count === 0)
 
-                                </form>
+    <button
+        type="button"
+        class="btn btn--ghost"
+        disabled
+        style="opacity:.5; cursor:not-allowed;"
+    >
+        Sin preguntas
+    </button>
 
-                            @else
 
-                                <button
-                                    type="button"
-                                    class="btn btn--ghost"
-                                    disabled
-                                    style="opacity:.5; cursor:not-allowed;"
-                                >
-                                    Sin preguntas
-                                </button>
+@elseif($intento && $intento->estado === 'Finalizado')
 
-                            @endif
+    <a
+        href="{{ route('intentos.resultado', $intento) }}"
+        class="btn btn--ghost"
+    >
+        Ver resultado
+    </a>
+
+
+@elseif($intento && $intento->estado === 'En progreso')
+
+    <a
+        href="{{ route('intentos.presentar', $intento) }}"
+        class="btn btn--accent"
+    >
+        Continuar
+    </a>
+
+
+@else
+
+    <form
+        method="POST"
+        action="{{ route('intentos.iniciar', $evaluacion) }}"
+    >
+        @csrf
+
+        <button
+            type="submit"
+            class="btn btn--accent"
+        >
+            Presentar
+        </button>
+
+    </form>
+
+@endif
 
                         </td>
 

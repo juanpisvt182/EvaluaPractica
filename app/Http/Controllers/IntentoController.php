@@ -62,21 +62,36 @@ class IntentoController extends Controller
      * Mostrar la evaluación al aprendiz.
      */
     public function presentar(Intento $intento)
-    {
-        $this->verificarPropietario($intento);
+{
+    $this->verificarPropietario($intento);
 
-        if ($intento->estado === 'Finalizado') {
-            return redirect()
-                ->route('intentos.resultado', $intento);
-        }
-
-        $intento->load([
-            'evaluacion.preguntas.opciones'
-        ]);
-
-        return view('intentos.presentar', compact('intento'));
+    if ($intento->estado === 'Finalizado') {
+        return redirect()
+            ->route('intentos.resultado', $intento);
     }
 
+    $intento->load([
+        'evaluacion.preguntas.opciones'
+    ]);
+
+    // Calcular cuándo termina la evaluación.
+    $fechaLimite = $intento->created_at
+        ->copy()
+        ->addMinutes($intento->evaluacion->tiempo_limite);
+
+    $segundosRestantes = max(
+        0,
+        now()->diffInSeconds($fechaLimite, false)
+    );
+
+    return view(
+        'intentos.presentar',
+        compact(
+            'intento',
+            'segundosRestantes'
+        )
+    );
+}
     /**
      * Guardar las respuestas y calcular el resultado.
      */
@@ -93,35 +108,46 @@ class IntentoController extends Controller
             'evaluacion.preguntas.opciones'
         ]);
 
-        $datos = $request->validate([
-            'respuestas' => 'required|array',
-            'respuestas.*' => 'required|integer|exists:opciones,id',
-        ]);
+       $fechaLimite = $intento->created_at
+    ->copy()
+    ->addMinutes($intento->evaluacion->tiempo_limite);
+
+$tiempoAgotado = now()->greaterThanOrEqualTo($fechaLimite);
+
+$datos = $request->validate([
+    'respuestas' => 'nullable|array',
+    'respuestas.*' => 'integer|exists:opciones,id',
+]);
 
         // Comprobar que todas las preguntas tengan respuesta.
-        foreach ($intento->evaluacion->preguntas as $pregunta) {
-            if (!isset($datos['respuestas'][$pregunta->id])) {
-                return back()
-                    ->withErrors([
-                        'respuestas' => 'Debes responder todas las preguntas antes de finalizar.'
-                    ])
-                    ->withInput();
-            }
+       if (!$tiempoAgotado) {
+
+    foreach ($intento->evaluacion->preguntas as $pregunta) {
+
+        if (!isset($datos['respuestas'][$pregunta->id])) {
+            return back()
+                ->withErrors([
+                    'respuestas' => 'Debes responder todas las preguntas antes de finalizar.'
+                ])
+                ->withInput();
         }
+    }
+}
 
         DB::transaction(function () use ($datos, $intento) {
 
             $correctas = 0;
             $total = $intento->evaluacion->preguntas->count();
+foreach ($intento->evaluacion->preguntas as $pregunta) {
 
-            foreach ($intento->evaluacion->preguntas as $pregunta) {
+    if (!isset($datos['respuestas'][$pregunta->id])) {
+        continue;
+    }
 
-                $opcionId = (int) $datos['respuestas'][$pregunta->id];
+    $opcionId = (int) $datos['respuestas'][$pregunta->id];
 
-                // Comprobar que la opción realmente pertenezca a esta pregunta.
-                $opcion = $pregunta->opciones
-                    ->firstWhere('id', $opcionId);
-
+    $opcion = $pregunta->opciones
+        ->firstWhere('id', $opcionId);
                 if (!$opcion) {
                     abort(422, 'La opción seleccionada no pertenece a la pregunta.');
                 }
@@ -180,7 +206,19 @@ class IntentoController extends Controller
 
         return view('intentos.resultado', compact('intento'));
     }
+/**
+ * Mostrar el historial de evaluaciones finalizadas del aprendiz.
+ */
+public function historial()
+{
+    $intentos = Intento::with('evaluacion')
+        ->where('user_id', auth()->id())
+        ->where('estado', 'Finalizado')
+        ->latest('finalizado_at')
+        ->get();
 
+    return view('intentos.historial', compact('intentos'));
+}
     /**
      * Evitar que un aprendiz vea intentos de otro usuario.
      */
