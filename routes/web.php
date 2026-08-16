@@ -4,11 +4,11 @@ use App\Http\Controllers\BitacoraController;
 use App\Http\Controllers\EvaluacionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsuarioController;
-use App\Models\Bitacora;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PreguntaController;
 use App\Http\Controllers\IntentoController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\DashboardController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -20,38 +20,12 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    $userId = auth()->id();
-
-    $total = Bitacora::where('user_id', $userId)->count();
-
-    $aprobadas = Bitacora::where('user_id', $userId)
-        ->where('estado', 'Aprobado')
-        ->count();
-
-    $enviadas = Bitacora::where('user_id', $userId)
-        ->where('estado', 'Enviado')
-        ->count();
-
-    $borrador = Bitacora::where('user_id', $userId)
-        ->where('estado', 'Borrador')
-        ->count();
-
-    $pendientes = $borrador + $enviadas;
-
-    $progreso = $total > 0
-        ? round(($aprobadas / $total) * 100)
-        : 0;
-
-    return view('dashboard', compact(
-        'total',
-        'aprobadas',
-        'pendientes',
-        'progreso',
-        'enviadas',
-        'borrador'
-    ));
-})->middleware('auth')->name('dashboard');
+Route::get(
+    '/dashboard',
+    [DashboardController::class, 'index']
+)
+    ->middleware('auth')
+    ->name('dashboard');
 
 
 /*
